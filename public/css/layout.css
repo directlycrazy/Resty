@@ -1,0 +1,14 @@
+:root {
+	--sl-font-sans: "Geist", sans-serif !important;
+}
+
+body {
+	font-family: "Geist", sans-serif;
+	font-optical-sizing: auto;
+	font-weight: 400;
+	font-style: normal;
+}
+
+sl-card.no-padding {
+	--padding: 0;
+}
