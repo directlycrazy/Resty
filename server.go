@@ -2,36 +2,50 @@ package main
 
 import (
 	"log"
+	"net/url"
+	"os"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/template/handlebars/v2"
+	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gofiber/fiber/v2/middleware/proxy"
 )
 
-func router() *fiber.App {
-	engine := handlebars.New("./views", ".hbs")
+func prepareDevServer(app *fiber.App) {
+	url, err := url.Parse("http://localhost:5173")
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	app := fiber.New(fiber.Config{
-		Views: engine,
+	app.Use(proxy.Balancer(proxy.Config{
+		Servers: []string{
+			url.String(),
+		},
+		Next: func(c *fiber.Ctx) bool {
+			return len(c.Path()) >= 4 && c.Path()[:4] == "/api"
+		},
+	}))
+}
+
+func prepareMiddleware(app *fiber.App) {
+	if os.Getenv("ENV") == "dev" {
+		prepareDevServer(app)
+		return
+	}
+
+	app.Static("/", "./client/dist")
+	app.Use("*", func(c *fiber.Ctx) error {
+		return c.SendFile("./client/dist/index.html")
 	})
-
-	app.Static("/static", "./public")
-
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.Redirect("/portal/login")
-	})
-
-	portal := app.Group("/portal")
-	portal.Get("/login", func(c *fiber.Ctx) error {
-		return c.Render("login", fiber.Map{
-			"title": "Login",
-		}, "layouts/main")
-	})
-
-	return app
 }
 
 func main() {
-	app := router()
+	app := fiber.New()
+
+	app.Use(logger.New(logger.Config{
+		Format: "[${ip}] ${time} ${status} - ${method} ${path} ${ua} \n",
+	}))
+
+	prepareMiddleware(app)
 
 	log.Fatal(app.Listen(":3000"))
 }
