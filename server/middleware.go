@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/helmet"
 	"github.com/gofiber/fiber/v2/middleware/proxy"
 )
 
@@ -30,6 +31,13 @@ func PrepareMiddleware(app *fiber.App) {
 		prepareDevServer(app)
 		return
 	}
+
+	app.Use(helmet.New())
+
+	app.Use(func(c *fiber.Ctx) error {
+		c.Set("X-Powered-By", "Resty")
+		return c.Next()
+	})
 
 	app.Static("/", "../client/dist")
 	app.Use("*", func(c *fiber.Ctx) error {

@@ -13,6 +13,10 @@ func main() {
 
 	app := fiber.New(fiber.Config{
 		Views: engine,
+		ErrorHandler: func(c *fiber.Ctx, err error) error {
+			log.Fatalf("%v", err)
+			return RenderError(c, 500)
+		},
 	})
 
 	app.Use(logger.New(logger.Config{
