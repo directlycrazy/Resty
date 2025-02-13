@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/proxy"
 )
 
@@ -26,26 +25,14 @@ func prepareDevServer(app *fiber.App) {
 	}))
 }
 
-func prepareMiddleware(app *fiber.App) {
+func PrepareMiddleware(app *fiber.App) {
 	if os.Getenv("ENV") == "dev" {
 		prepareDevServer(app)
 		return
 	}
 
-	app.Static("/", "./client/dist")
+	app.Static("/", "../client/dist")
 	app.Use("*", func(c *fiber.Ctx) error {
-		return c.SendFile("./client/dist/index.html")
+		return c.SendFile("../client/dist/index.html")
 	})
-}
-
-func main() {
-	app := fiber.New()
-
-	app.Use(logger.New(logger.Config{
-		Format: "[${ip}] ${time} ${status} - ${method} ${path} ${ua} \n",
-	}))
-
-	prepareMiddleware(app)
-
-	log.Fatal(app.Listen(":3000"))
 }
