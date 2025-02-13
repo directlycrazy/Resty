@@ -35,12 +35,11 @@ func PrepareMiddleware(app *fiber.App) {
 	app.Use(helmet.New())
 
 	app.Use(func(c *fiber.Ctx) error {
-		c.Set("X-Powered-By", "Resty")
+		c.Set("Server", "Resty")
 		return c.Next()
 	})
 
-	app.Static("/", "../client/dist")
-	app.Use("*", func(c *fiber.Ctx) error {
-		return c.SendFile("../client/dist/index.html")
+	app.Use(func(c *fiber.Ctx) error {
+		return HandleRoutes(c)
 	})
 }

@@ -17,6 +17,7 @@ func main() {
 			log.Fatalf("%v", err)
 			return RenderError(c, 500)
 		},
+		DisableStartupMessage: true,
 	})
 
 	app.Use(logger.New(logger.Config{
