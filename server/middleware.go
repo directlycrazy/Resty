@@ -35,7 +35,7 @@ func PrepareMiddleware(app *fiber.App) {
 	app.Use(helmet.New())
 
 	app.Use(func(c *fiber.Ctx) error {
-		c.Set("Server", "Resty")
+		c.Set("Server", "resty")
 		return c.Next()
 	})
 

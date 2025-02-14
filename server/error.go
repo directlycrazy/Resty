@@ -13,7 +13,7 @@ func parseErrorCode(code uint16) (str string) {
 func RenderError(c *fiber.Ctx, code uint16) (e error) {
 	status := parseErrorCode(code)
 
-	return c.Render("error", fiber.Map{
+	return c.Status(int(code)).Render("error", fiber.Map{
 		"Code":   code,
 		"Status": status,
 	})
