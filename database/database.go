@@ -1,4 +1,4 @@
-package main
+package database
 
 import (
 	"log"
@@ -10,7 +10,7 @@ import (
 var Database *gorm.DB
 
 func InitDB() {
-	db, err := gorm.Open(sqlite.Open("./database/db.sqlite"), &gorm.Config{})
+	db, err := gorm.Open(sqlite.Open("./database/data/db.sqlite"), &gorm.Config{})
 	if err != nil {
 		panic(err)
 	}

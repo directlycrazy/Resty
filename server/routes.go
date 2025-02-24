@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"fmt"
@@ -48,9 +48,9 @@ func CreateRoutes() {
 	//Admin GUI
 	admin := fiber.New()
 	admin.Use(compress.New())
-	admin.Static("/", "../client/dist")
+	admin.Static("/", "./client/dist")
 	admin.Use("*", func(c *fiber.Ctx) error {
-		return c.SendFile("../client/dist/index.html")
+		return c.SendFile("./client/dist/index.html")
 	})
 	hosts[fmt.Sprintf("%s:%v", RestyConfig.Host, RestyConfig.Port)] = &Host{admin}
 }
