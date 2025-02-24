@@ -2,9 +2,13 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"net/url"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/compress"
+	"github.com/gofiber/fiber/v2/middleware/proxy"
 )
 
 type Host struct {
@@ -12,6 +16,31 @@ type Host struct {
 }
 
 var hosts = map[string]*Host{}
+
+func defineRoute(host string, proxyStr string) (e error) {
+	r := fiber.New()
+
+	proxyUrl, err := url.Parse(proxyStr)
+	if err != nil {
+		log.Fatal(err)
+		return err
+	}
+
+	r.Use(proxy.Balancer(proxy.Config{
+		Servers: []string{
+			proxyUrl.String(),
+		},
+		ModifyResponse: func(c *fiber.Ctx) error {
+			c.Response().Header.Add("Server", "resty")
+			return nil
+		},
+		Timeout: 30 * time.Second,
+	}))
+
+	hosts[fmt.Sprintf("%s:%v", host, RestyPort)] = &Host{r}
+
+	return nil
+}
 
 func CreateRoutes() {
 	//Admin GUI
