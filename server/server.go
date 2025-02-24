@@ -29,6 +29,6 @@ func main() {
 
 	PrepareMiddleware(app)
 
-	log.Printf("[Resty] Available at %s:%d", RestyHost, RestyPort)
-	log.Fatal(app.Listen(fmt.Sprintf("%s:%d", RestyHost, RestyPort)))
+	log.Printf("[Resty] Available at %s:%d", RestyConfig.Host, RestyConfig.Port)
+	log.Fatal(app.Listen(fmt.Sprintf("%s:%d", RestyConfig.Host, RestyConfig.Port)))
 }

@@ -31,13 +31,15 @@ func defineRoute(host string, proxyStr string) (e error) {
 			proxyUrl.String(),
 		},
 		ModifyResponse: func(c *fiber.Ctx) error {
-			c.Response().Header.Add("Server", "resty")
+			if RestyConfig.ServerHeaderEnabled {
+				c.Response().Header.Add("Server", "resty")
+			}
 			return nil
 		},
 		Timeout: 30 * time.Second,
 	}))
 
-	hosts[fmt.Sprintf("%s:%v", host, RestyPort)] = &Host{r}
+	hosts[fmt.Sprintf("%s:%v", host, RestyConfig.Port)] = &Host{r}
 
 	return nil
 }
@@ -50,7 +52,7 @@ func CreateRoutes() {
 	admin.Use("*", func(c *fiber.Ctx) error {
 		return c.SendFile("../client/dist/index.html")
 	})
-	hosts[fmt.Sprintf("%s:%v", RestyHost, RestyPort)] = &Host{admin}
+	hosts[fmt.Sprintf("%s:%v", RestyConfig.Host, RestyConfig.Port)] = &Host{admin}
 }
 
 func HandleRoutes(c *fiber.Ctx) (e error) {

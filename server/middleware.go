@@ -34,10 +34,12 @@ func PrepareMiddleware(app *fiber.App) {
 
 	app.Use(helmet.New())
 
-	app.Use(func(c *fiber.Ctx) error {
-		c.Set("Server", "resty")
-		return c.Next()
-	})
+	if RestyConfig.ServerHeaderEnabled {
+		app.Use(func(c *fiber.Ctx) error {
+			c.Set("Server", "resty")
+			return c.Next()
+		})
+	}
 
 	app.Use(func(c *fiber.Ctx) error {
 		return HandleRoutes(c)
