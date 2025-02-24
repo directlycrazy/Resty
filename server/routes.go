@@ -1,6 +1,11 @@
 package main
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"fmt"
+
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/compress"
+)
 
 type Host struct {
 	Fiber *fiber.App
@@ -11,11 +16,12 @@ var hosts = map[string]*Host{}
 func CreateRoutes() {
 	//Admin GUI
 	admin := fiber.New()
+	admin.Use(compress.New())
 	admin.Static("/", "../client/dist")
 	admin.Use("*", func(c *fiber.Ctx) error {
 		return c.SendFile("../client/dist/index.html")
 	})
-	hosts["localhost:3000"] = &Host{admin}
+	hosts[fmt.Sprintf("%s:%v", RestyHost, RestyPort)] = &Host{admin}
 }
 
 func HandleRoutes(c *fiber.Ctx) (e error) {

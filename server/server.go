@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/gofiber/fiber/v2"
@@ -9,6 +10,8 @@ import (
 )
 
 func main() {
+	InitDB()
+
 	engine := html.New("../views", ".html")
 
 	app := fiber.New(fiber.Config{
@@ -26,5 +29,6 @@ func main() {
 
 	PrepareMiddleware(app)
 
-	log.Fatal(app.Listen(":3000"))
+	log.Printf("[Resty] Available at %s:%d", RestyHost, RestyPort)
+	log.Fatal(app.Listen(fmt.Sprintf("%s:%d", RestyHost, RestyPort)))
 }
