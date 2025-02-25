@@ -7,7 +7,7 @@ import (
 	"gorm.io/gorm"
 )
 
-var Database *gorm.DB
+var D *gorm.DB
 
 func InitDB() {
 	db, err := gorm.Open(sqlite.Open("./database/data/db.sqlite"), &gorm.Config{})
@@ -16,6 +16,6 @@ func InitDB() {
 	}
 
 	db.AutoMigrate(&User{}, &Hosts{})
-	Database = db
+	D = db
 	log.Printf("[Resty] All Migrations Applied")
 }

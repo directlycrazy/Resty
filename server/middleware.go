@@ -27,6 +27,8 @@ func prepareDevServer(app *fiber.App) {
 }
 
 func PrepareMiddleware(app *fiber.App) {
+	CreateRoutes()
+
 	if os.Getenv("ENV") == "dev" {
 		prepareDevServer(app)
 		return
